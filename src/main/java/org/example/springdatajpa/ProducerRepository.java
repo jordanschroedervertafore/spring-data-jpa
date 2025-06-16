@@ -1,21 +1,24 @@
 package org.example.springdatajpa;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public interface ProducerRepository extends JpaRepository<Producer, UUID>, JpaSpecificationExecutor<Producer> {
-
-    //@Query("select p from Producer p left join fetch p.businessUnits")
+    //@EntityGraph(value = "Producer.address")
     List<Producer> findByName(String name);
 
-    @Query("select p from Producer p left join fetch p.businessUnits")
-    List<Producer> findByNameFixed(String name);
+    @Query("select p from Producer p where p.email ilike :email")
+    Stream<Producer> findByEmail(String email);
+
+    @Query(value = "select * from producer where email ilike :email", nativeQuery = true)
+    Stream<Producer> findByEmail2(String email);
+
+    Stream<Producer> findByHomeState(String homeState);
+
+    int deleteByBusinessUnitsContainingAndHomeStateIsLikeIgnoreCaseAndNameStartingWith(List<BusinessUnit> businessUnits, String homeState, String name);
 
     List<Name> getNameByHomeState(String homeState);
 
@@ -27,4 +30,7 @@ public interface ProducerRepository extends JpaRepository<Producer, UUID>, JpaSp
             clearAutomatically = true
     )
     void updateEmail();
+
+    @Query("select p from Producer p left join fetch p.businessUnits left join fetch p.address left join fetch p.licenses")
+    List<Producer> findByNameFixed(String name);
 }

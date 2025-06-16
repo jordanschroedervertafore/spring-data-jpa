@@ -9,13 +9,13 @@ public class ProjectionTest extends Example {
 
     @BeforeEach
     void setUp() {
-        createProducers(100);
+        createProducers(1);
     }
 
     @Test
     @Transactional
     void getNamesByHomeState() {
-        producerRepository.getNameByHomeState("MI").forEach(name -> System.out.println(name.getName()));
+        producerRepository.getNameByHomeState("MI");
     }
 
     @Test

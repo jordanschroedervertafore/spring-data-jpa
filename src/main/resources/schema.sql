@@ -1,11 +1,17 @@
 CREATE TABLE IF NOT EXISTS public.producer
 (
-    id uuid NOT NULL,
+    id uuid NOT NULL PRIMARY KEY,
     name text,
     email text,
     home_state text,
-    version int,
-    CONSTRAINT producer_pkey PRIMARY KEY (id)
+    npn text,
+    version TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE public.address (
+    producer_id uuid PRIMARY KEY,
+    address text,
+    FOREIGN KEY (producer_id) REFERENCES public.producer
 );
 
 CREATE TABLE IF NOT EXISTS public.business_unit
@@ -22,13 +28,13 @@ CREATE TABLE public.producer_business_unit
     business_unit_id uuid,
     FOREIGN KEY (producer_id)
         REFERENCES public.producer (id)
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
         DEFERRABLE,
     FOREIGN KEY (business_unit_id)
         REFERENCES public.business_unit (id)
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
         DEFERRABLE
 );
 
@@ -43,3 +49,4 @@ CREATE TABLE public.license
         ON DELETE NO ACTION
         DEFERRABLE
 );
+

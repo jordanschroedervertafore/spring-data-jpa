@@ -9,6 +9,7 @@ import org.example.springdatajpa.ProducerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -45,7 +46,7 @@ class ManyToManyTest extends Example {
                 producer.setName("jordan");
                 producer.setEmail(FAKER.internet().emailAddress());
                 producer.setHomeState(FAKER.address().state());
-                for (int j = 0; j < 30; j++) {
+                for (int j = 0; j < 50; j++) {
                     producer.addBusinessUnit(businessUnits.get(RANDOM.nextInt(0, businessUnits.size())));
                 }
 
@@ -55,26 +56,26 @@ class ManyToManyTest extends Example {
             entityManager.clear();
         });
     }
-
-    @Test
-    @Transactional(propagation = Propagation.NEVER)
-    void nplus1() {
-        transactionTemplate.executeWithoutResult(_ -> {
-            System.out.println("New transaction begins here \n---------");
-            var producers = producerRepository.findByName("jordan");
-            producers.forEach(producer -> producer.getBusinessUnits().size());
-        });
-    }
-
-    @Test
-    @Transactional(propagation = Propagation.NEVER)
-    void nplus1Fixed() {
-        transactionTemplate.executeWithoutResult(_ -> {
-            System.out.println("New transaction begins here \n---------");
-            var producers = producerRepository.findByNameFixed("jordan");
-            producers.forEach(producer -> producer.getBusinessUnits().size());
-        });
-    }
+//
+//    @Test
+//    @Transactional(propagation = Propagation.NEVER)
+//    void nplus1() {
+//        transactionTemplate.executeWithoutResult(_ -> {
+//            System.out.println("New transaction begins here \n---------");
+//            var producers = producerRepository.findByName("jordan");
+//            producers.forEach(producer -> producer.getBusinessUnits().size());
+//        });
+//    }
+//
+//    @Test
+//    @Transactional(propagation = Propagation.NEVER)
+//    void nplus1Fixed() {
+//        transactionTemplate.executeWithoutResult(_ -> {
+//            System.out.println("New transaction begins here \n---------");
+//            var producers = producerRepository.findByNameFixed("jordan");
+//            producers.forEach(producer -> producer.getBusinessUnits().size());
+//        });
+//    }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
@@ -82,7 +83,9 @@ class ManyToManyTest extends Example {
         transactionTemplate.executeWithoutResult(_ -> {
             System.out.println("New transaction begins here \n---------");
             var producers = producerRepository.findByNameFixed("jordan");
-            producers.get(0).getBusinessUnits().removeFirst();
+            Producer producer = producers.get(0);
+            //producer.removeBusinessUnit(producer.getBusinessUnits().iterator().next());
+            producer.addBusinessUnit(new BusinessUnit());
         });
     }
 }
