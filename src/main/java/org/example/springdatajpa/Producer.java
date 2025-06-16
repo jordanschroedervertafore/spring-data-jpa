@@ -39,12 +39,14 @@ public class Producer {
     @JoinTable(name = "producer_business_unit",
         joinColumns = @JoinColumn(name = "producer_id"),
         inverseJoinColumns = @JoinColumn(name = "business_unit_id"))
-    private Set<BusinessUnit> businessUnits = new HashSet<>();
+    private List<BusinessUnit> businessUnits = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-//    mappedBy = "producer")
-    @JoinColumn(name = "producer_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+    mappedBy = "producer")
+    //@JoinColumn(name = "producer_id")
     private Set<License> licenses = new HashSet<>();
+
+    private String npn;
 
     @Version
     private Integer version;
@@ -84,7 +86,7 @@ public class Producer {
 
     public void addLicense(License license) {
         licenses.add(license);
-//        license.setProducer(this);
+        license.setProducer(this);
     }
 
     public void removeLicense(License license) {
